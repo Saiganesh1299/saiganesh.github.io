@@ -1,1 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Porsche 911 — The Legend</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d080;
+      --red: #e8001d;
+      --dark: #080808;
+      --darker: #030303;
+      --mid: #111111;
+      --surface: #161616;
+      --text: #e8e0d0;
+      --muted: #7a7060;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--darker);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    .cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+      opacity: 0.6;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+      background: var(--darker);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 40%, #1a0a00 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, #1a0500 0%, transparent 60%),
+        var(--darker);
+    }
+
+    /* Animated grid lines */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridDrift 20s linear infinite;
+    }
+    @keyframes gridDrift {
+      from { transform: translateY(0); }
+      to   { transform: translateY(60px); }
+    }
+
+    /* Speedlines */
+    .speedlines {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .speedline {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.15), transparent);
+      animation: speedline linear infinite;
+    }
+    @keyframes speedline {
+      from { transform: translateX(-100%); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      to   { transform: translateX(100vw); opacity: 0; }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 8vw 8vh;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 6px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 16vw, 14rem);
+      line-height: 0.88;
+      letter-spacing: -2px;
+      color: var(--text);
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.5s;
+    }
+
+    .hero-title span {
+      color: var(--gold);
+      display: block;
+    }
+
+    .hero-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      color: var(--muted);
+      margin-top: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .hero-meta {
+      position: absolute;
+      right: 8vw;
+      bottom: 8vh;
+      text-align: right;
+      z-index: 2;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1s;
+    }
+    .hero-meta .stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-meta .stat-lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 3vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.4s;
+    }
+    .scroll-hint span {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 4px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.2); }
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      padding: 10vh 8vw;
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 6px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, rgba(201,168,76,0.4), transparent);
+      max-width: 200px;
+    }
+
+    /* ── SPECS SECTION ── */
+    #specs { background: var(--mid); }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 2px;
+      margin-top: 3rem;
+    }
+
+    .spec-card {
+      background: var(--surface);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease, background 0.3s;
+    }
+    .spec-card:hover { background: #1e1e1e; }
+    .spec-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--gold);
+      transition: height 0.4s ease;
+    }
+    .spec-card:hover::before { height: 100%; }
+
+    .spec-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .spec-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .spec-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .spec-unit {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+    .spec-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+
+    /* Counter animation */
+    .count-up { display: inline-block; }
+
+    /* ── HISTORY TIMELINE ── */
+    #history { background: var(--darker); }
+
+    .timeline {
+      position: relative;
+      margin-top: 3rem;
+      padding-left: 4rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -3.3rem;
+      top: 0.3rem;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { box-shadow: 0 0 8px var(--gold); }
+      50%       { box-shadow: 0 0 20px var(--gold), 0 0 40px rgba(201,168,76,0.3); }
+    }
+    .timeline-year {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: rgba(201,168,76,0.2);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .timeline-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .timeline-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-style: italic;
+      max-width: 540px;
+    }
+
+    /* ── ENGINE SECTION ── */
+    #engine { background: var(--mid); }
+
+    .engine-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5vw;
+      align-items: center;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .engine-layout { grid-template-columns: 1fr; }
+    }
+
+    .engine-visual {
+      position: relative;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Animated RPM circle */
+    .rpm-ring {
+      position: relative;
+      width: 260px; height: 260px;
+    }
+    .rpm-ring svg {
+      position: absolute;
+      inset: 0;
+      animation: rotateSlow 8s linear infinite;
+    }
+    .rpm-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .rpm-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .rpm-lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .engine-info h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+    .engine-info h2 em {
+      color: var(--gold);
+      font-style: normal;
+    }
+    .engine-info p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.9;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+
+    .bar-stat { margin-bottom: 1.2rem; }
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .bar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px;
+      width: 0;
+      transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ── VARIANTS SECTION ── */
+    #variants { background: var(--darker); }
+
+    .variants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+      margin-top: 3rem;
+    }
+
+    .variant-card {
+      background: var(--surface);
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .variant-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .variant-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201,168,76,0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .variant-card:hover::after { opacity: 1; }
+
+    .variant-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .variant-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+    }
+    .variant-hp {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+    }
+    .variant-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.7;
+      margin-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 1rem;
+    }
+
+    /* ── RACING HERITAGE ── */
+    #racing {
+      background: linear-gradient(135deg, #0a0000 0%, var(--darker) 100%);
+      text-align: center;
+      padding: 14vh 8vw;
+    }
+
+    .racing-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 22vw, 18rem);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(201,168,76,0.15);
+      line-height: 0.85;
+      letter-spacing: -5px;
+      margin-bottom: -2rem;
+      animation: numberGlow 4s ease-in-out infinite;
+    }
+    @keyframes numberGlow {
+      0%, 100% { -webkit-text-stroke-color: rgba(201,168,76,0.1); }
+      50%       { -webkit-text-stroke-color: rgba(201,168,76,0.3); }
+    }
+
+    .racing-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 6vw, 5rem);
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+    }
+    .racing-title span { color: var(--red); }
+
+    .racing-stats {
+      display: flex;
+      justify-content: center;
+      gap: 5vw;
+      flex-wrap: wrap;
+      margin-top: 5rem;
+    }
+    .racing-stat {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .racing-stat.visible { opacity: 1; transform: translateY(0); }
+    .racing-stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .racing-stat-lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── QUOTE ── */
+    #quote {
+      background: var(--mid);
+      text-align: center;
+      padding: 12vh 8vw;
+    }
+    .big-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.5;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+    .big-quote::before {
+      content: '"';
+      font-size: 8rem;
+      color: rgba(201,168,76,0.1);
+      position: absolute;
+      top: -2rem;
+      left: -2rem;
+      font-family: 'Cormorant Garamond', serif;
+      line-height: 1;
+    }
+    .quote-attr {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--darker);
+      padding: 4vh 8vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      letter-spacing: 4px;
+    }
+    .footer-note {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+    }
+
+    /* Utilities */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .section-heading em {
+      color: var(--gold);
+      font-style: normal;
+    }
+    .section-sub {
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 500px;
+    }
+
+    /* Red accent line */
+    .red-accent {
+      display: inline-block;
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9000;
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="grid-overlay"></div>
+    <div class="speedlines" id="speedlines"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Porsche AG — Since 1963</div>
+      <h1 class="hero-title">
+        911<span>The Legend</span>
+      </h1>
+      <p class="hero-sub">Six decades of pure driving perfection</p>
+    </div>
+
+    <div class="hero-meta">
+      <div class="stat-val">3.0s</div>
+      <div class="stat-lbl">0–100 km/h</div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ── SPECS ── -->
+  <section id="specs">
+    <div class="section-label">Technical Specifications</div>
+    <h2 class="section-heading">Raw <em>Numbers</em></h2>
+    <p class="section-sub">The 2024 Porsche 911 Carrera S — engineering distilled to its purest form.</p>
+    <div class="specs-grid" id="specsGrid">
+      <div class="spec-card"><span class="spec-icon">⚡</span><div class="spec-value"><span class="count-up" data-target="450">0</span><span class="spec-unit">HP</span></div><div class="spec-name">Max Power</div></div>
+      <div class="spec-card"><span class="spec-icon">🔁</span><div class="spec-value"><span class="count-up" data-target="530">0</span><span class="spec-unit">Nm</span></div><div class="spec-name">Peak Torque</div></div>
+      <div class="spec-card"><span class="spec-icon">🏁</span><div class="spec-value">3.0<span class="spec-unit">sec</span></div><div class="spec-name">0–100 km/h</div></div>
+      <div class="spec-card"><span class="spec-icon">💨</span><div class="spec-value"><span class="count-up" data-target="308">0</span><span class="spec-unit">km/h</span></div><div class="spec-name">Top Speed</div></div>
+      <div class="spec-card"><span class="spec-icon">🔧</span><div class="spec-value">3.0<span class="spec-unit">L</span></div><div class="spec-name">Engine Displacement</div></div>
+      <div class="spec-card"><span class="spec-icon">⚙️</span><div class="spec-value"><span class="count-up" data-target="8">0</span><span class="spec-unit">spd</span></div><div class="spec-name">PDK Gearbox</div></div>
+      <div class="spec-card"><span class="spec-icon">⚖️</span><div class="spec-value"><span class="count-up" data-target="1480">0</span><span class="spec-unit">kg</span></div><div class="spec-name">Kerb Weight</div></div>
+      <div class="spec-card"><span class="spec-icon">💰</span><div class="spec-value">$130<span class="spec-unit">k</span></div><div class="spec-name">Starting Price</div></div>
+    </div>
+  </section>
+
+  <!-- ── HISTORY ── -->
+  <section id="history">
+    <div class="section-label">Heritage</div>
+    <h2 class="section-heading"><em>60 Years</em> of History</h2>
+    <p class="section-sub">From a sketch on a napkin to the most recognisable sports car on the planet.</p>
+
+    <div class="timeline" id="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1963</div>
+        <div class="timeline-title">The Birth — Frankfurt Motor Show</div>
+        <div class="timeline-desc">Ferdinand "Butzi" Porsche unveils the 901 (later 911) to the world. A rear-engine, air-cooled flat-six defines the silhouette that will never be forgotten.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1973</div>
+        <div class="timeline-title">Carrera RS 2.7 — The Holy Grail</div>
+        <div class="timeline-desc">Lightweight, ducktail spoiler, 210 hp. The RS 2.7 becomes the most coveted 911 ever built. Only 1,580 made. Now worth millions.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1989</div>
+        <div class="timeline-title">964 — The Modern Era Begins</div>
+        <div class="timeline-desc">Major redesign brings ABS, power steering and all-wheel drive Carrera 4. Still unmistakably 911, yet refined for a new generation.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1997</div>
+        <div class="timeline-title">996 — Water-Cooled Revolution</div>
+        <div class="timeline-desc">After 34 years, Porsche switches to water-cooling. Controversial at the time, it allows higher performance and stricter emissions compliance.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2011</div>
+        <div class="timeline-title">991 — The Digital Age</div>
+        <div class="timeline-desc">Longer wheelbase, electric steering, and the first 911 with a 7-speed manual. Sets the template for the modern era of the 911.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2019</div>
+        <div class="timeline-title">992 — Pinnacle of Perfection</div>
+        <div class="timeline-desc">Widebody design, wet mode, night vision assist. The 992 is the most technologically advanced 911 ever, while staying true to its soul.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ENGINE ── -->
+  <section id="engine">
+    <div class="section-label">Powertrain</div>
+    <div class="engine-layout">
+      <div class="engine-visual">
+        <div class="rpm-ring">
+          <svg viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="130" cy="130" r="120" stroke="rgba(201,168,76,0.1)" stroke-width="1"/>
+            <circle cx="130" cy="130" r="100" stroke="rgba(201,168,76,0.06)" stroke-width="1" stroke-dasharray="4 8"/>
+            <circle cx="130" cy="130" r="80" stroke="rgba(201,168,76,0.12)" stroke-width="1"/>
+            <!-- tick marks -->
+            <g stroke="rgba(201,168,76,0.4)" stroke-width="1.5">
+              <line x1="130" y1="12" x2="130" y2="28"/>
+              <line x1="130" y1="12" x2="130" y2="28" transform="rotate(45 130 130)"/>
+              <line x1="130" y1="12" x2="130" y2="28" transform="rotate(90 130 130)"/>
+              <line x1="130" y1="12" x2="130" y2="28" transform="rotate(135 130 130)"/>
+              <line x1="130" y1="12" x2="130" y2="28" transform="rotate(180 130 130)"/>
+              <line x1="130" y1="12" x2="130" y2="28" transform="rotate(225 130 130)"/>
+              <line x1="130" y1="12" x2="130" y2="28" transform="rotate(270 130 130)"/>
+              <line x1="130" y1="12" x2="130" y2="28" transform="rotate(315 130 130)"/>
+            </g>
+          </svg>
+          <div class="rpm-center">
+            <div class="rpm-val">9,000</div>
+            <div class="rpm-lbl">Max RPM</div>
+          </div>
+        </div>
+      </div>
+      <div class="engine-info">
+        <div class="red-accent"></div>
+        <h2>Twin-Turbo <em>Flat-Six</em></h2>
+        <p>The heart of the 911 beats in the rear. A 3.0-litre, twin-turbocharged, horizontally-opposed six-cylinder engine — an engineering masterpiece refined over six decades of motorsport DNA.</p>
+
+        <div class="bar-stat">
+          <div class="bar-label"><span>Power Output</span><span>450 HP</span></div>
+          <div class="bar-track"><div class="bar-fill" data-width="90"></div></div>
+        </div>
+        <div class="bar-stat">
+          <div class="bar-label"><span>Torque</span><span>530 Nm</span></div>
+          <div class="bar-track"><div class="bar-fill" data-width="85"></div></div>
+        </div>
+        <div class="bar-stat">
+          <div class="bar-label"><span>Rev Ceiling</span><span>9,000 RPM</span></div>
+          <div class="bar-track"><div class="bar-fill" data-width="95"></div></div>
+        </div>
+        <div class="bar-stat">
+          <div class="bar-label"><span>Efficiency</span><span>10.8L/100km</span></div>
+          <div class="bar-track"><div class="bar-fill" data-width="70"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── VARIANTS ── -->
+  <section id="variants">
+    <div class="section-label">Model Range</div>
+    <h2 class="section-heading">Choose Your <em>911</em></h2>
+    <p class="section-sub">Every variant — one uncompromising soul.</p>
+    <div class="variants-grid" id="variantsGrid">
+      <div class="variant-card">
+        <div class="variant-tag">Entry Icon</div>
+        <div class="variant-name">Carrera</div>
+        <div class="variant-hp">385 HP — RWD</div>
+        <div class="variant-desc">The purist's choice. Rear-wheel drive, naturally communicative, and utterly addictive on a winding road.</div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-tag">All-Weather</div>
+        <div class="variant-name">Carrera 4S</div>
+        <div class="variant-hp">450 HP — AWD</div>
+        <div class="variant-desc">Wider body, all-wheel drive, and more power. The daily-driver 911 without compromise.</div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-tag">Track-Bred</div>
+        <div class="variant-name">GT3</div>
+        <div class="variant-hp">510 HP — RWD</div>
+        <div class="variant-desc">Naturally aspirated flat-six screaming to 9,000 rpm. A road-legal race car with PDK or 6-speed manual.</div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-tag">Hardcore</div>
+        <div class="variant-name">GT3 RS</div>
+        <div class="variant-hp">525 HP — RWD</div>
+        <div class="variant-desc">Active aerodynamics, DRS, motorsport-derived suspension. The most extreme street-legal 911 ever made.</div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-tag">Ultimate</div>
+        <div class="variant-name">Turbo S</div>
+        <div class="variant-hp">650 HP — AWD</div>
+        <div class="variant-desc">0–100 in 2.7 seconds. The fastest production 911 ever. Effortless, brutal, and devastatingly refined.</div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-tag">Lightweight</div>
+        <div class="variant-name">Sport Classic</div>
+        <div class="variant-hp">480 HP — RWD</div>
+        <div class="variant-desc">Limited edition. Double-bubble roof, ducktail spoiler, 7-speed manual only. Heritage wrapped in modernity.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RACING ── -->
+  <section id="racing">
+    <div class="racing-number">911</div>
+    <div class="racing-title">Racing <span>Heritage</span></div>
+    <div class="racing-stats" id="racingStats">
+      <div class="racing-stat">
+        <div class="racing-stat-val"><span class="count-up" data-target="23">0</span>+</div>
+        <div class="racing-stat-lbl">Le Mans Class Wins</div>
+      </div>
+      <div class="racing-stat">
+        <div class="racing-stat-val"><span class="count-up" data-target="5">0</span></div>
+        <div class="racing-stat-lbl">Le Mans Overall Wins</div>
+      </div>
+      <div class="racing-stat">
+        <div class="racing-stat-val"><span class="count-up" data-target="60">0</span>+</div>
+        <div class="racing-stat-lbl">Years of Racing</div>
+      </div>
+      <div class="racing-stat">
+        <div class="racing-stat-val"><span class="count-up" data-target="30000">0</span>+</div>
+        <div class="racing-stat-lbl">Race Victories</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── QUOTE ── -->
+  <section id="quote">
+    <blockquote class="big-quote">
+      The 911 is the only car that you could drive on the Safari Rally and then take to the opera.
+    </blockquote>
+    <div class="quote-attr">— Ferdinand Piëch, Automotive Legend</div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-brand">PORSCHE 911</div>
+    <div class="footer-note">© 2024 — Profile Page — All data based on 992.2 generation specs</div>
+  </footer>
+
+  <script>
+    // ── Cursor ──
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    // ── Speedlines ──
+    const slContainer = document.getElementById('speedlines');
+    for (let i = 0; i < 12; i++) {
+      const sl = document.createElement('div');
+      sl.className = 'speedline';
+      sl.style.top = Math.random() * 100 + '%';
+      sl.style.width = (Math.random() * 200 + 100) + 'px';
+      sl.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      sl.style.animationDelay = (Math.random() * 5) + 's';
+      slContainer.appendChild(sl);
+    }
+
+    // ── IntersectionObserver for animations ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+
+        // Spec cards stagger
+        if (el.id === 'specsGrid') {
+          el.querySelectorAll('.spec-card').forEach((card, i) => {
+            setTimeout(() => {
+              card.classList.add('visible');
+              // count-up
+              const counter = card.querySelector('.count-up');
+              if (counter) animCount(counter);
+            }, i * 80);
+          });
+        }
+
+        // Timeline items
+        if (el.id === 'timeline') {
+          el.querySelectorAll('.timeline-item').forEach((item, i) => {
+            setTimeout(() => item.classList.add('visible'), i * 150);
+          });
+        }
+
+        // Engine bars
+        if (el.id === 'engine') {
+          setTimeout(() => {
+            document.querySelectorAll('.bar-fill').forEach(bar => {
+              bar.style.width = bar.dataset.width + '%';
+            });
+          }, 300);
+        }
+
+        // Variants
+        if (el.id === 'variantsGrid') {
+          el.querySelectorAll('.variant-card').forEach((card, i) => {
+            setTimeout(() => card.classList.add('visible'), i * 100);
+          });
+        }
+
+        // Racing stats
+        if (el.id === 'racingStats') {
+          el.querySelectorAll('.racing-stat').forEach((stat, i) => {
+            setTimeout(() => {
+              stat.classList.add('visible');
+              const counter = stat.querySelector('.count-up');
+              if (counter) animCount(counter);
+            }, i * 120);
+          });
+        }
+
+        observer.unobserve(el);
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(document.getElementById('specsGrid'));
+    observer.observe(document.getElementById('timeline'));
+    observer.observe(document.getElementById('engine'));
+    observer.observe(document.getElementById('variantsGrid'));
+    observer.observe(document.getElementById('racingStats'));
+
+    // ── Count-up animation ──
+    function animCount(el) {
+      const target = +el.dataset.target;
+      const duration = 1400;
+      const start = performance.now();
+      function update(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(eased * target).toLocaleString();
+        if (t < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+  </script>
+</body>
+</html>
 
